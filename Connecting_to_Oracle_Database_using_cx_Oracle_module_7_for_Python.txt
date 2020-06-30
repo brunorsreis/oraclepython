@@ -1,0 +1,94 @@
+##This post can also be found at: http://www.techdatabasket.com/2020/06/02/connecting-to-oracle-database-using-cx_oracle-module-7-for-python/
+##Script and content created by Bruno Reis. It is not allowed to copy or share the content here without permission.
+
+Connecting to Oracle Database using cx_Oracle module 7 for Python
+In this post I will simply show how to connect to an Oracle database using Python 3 in an Oracle Linux 7.6 OS. One of the things that you have to do is to install Python in your OS. By default, Oracle Linux 7.6 comes with Python 7.6 but from 7.7 ownwards it comes with the version Python 3. If you wish to install the Python 3 in your system I do recommend you to take a look at one of my blog posts about this topic: “Installing Python 3 on Oracle Linux 7.6” http://www.techdatabasket.com/2020/06/02/installing-python-3-on-oracle-linux-7-6/ . After that you will have Python in the version that you wish, the next step is to install the module cx_Oracle that according from the Oracle Python Yum documentation “… is a module that enables access to Oracle Databases and conforms to the Python database API specification”. So to perform the installation from Pypi (https://pypi.org/project/cx-Oracle/​) you should execute the command “python3 -m pip install cx_Oracle –upgrade​” as below: (supposing that in this OS we have already Python 3 installed):
+	
+    ​
+ 
+oraclelinux7] python3 -m pip install cx_Oracle --upgrade​
+ 
+Collecting cx_Oracle​
+ 
+  Using cached https://files.pythonhosted.org/packages/d5/15/d38862a4bd0e18d8ef2a3c98f39e743b8951ec5efd8bc63e75db04b9bc31/cx_Oracle-7.3.0-cp36-cp36m-manylinux1_x86_64.whl​
+ 
+Installing collected packages: cx-Oracle​
+ 
+Successfully installed cx-Oracle-7.3.0​
+
+The next step is to install the Oracle Instant client. To be able to perform the Oracle instant client you can either perform the installation using the zip files or the RPM files. Following the 2 examples below:
+
+Oracle Instant Client Zip Files​
+
+https://www.oracle.com/ae/database/technologies/instant-client/linux-x86-64-downloads.html​
+
+Oracle Instant Client RPMs​
+
+	
+oraclelinux7]# yum install oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
+Loaded plugins: langpacks, ulninfo
+Examining oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm: oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64
+Marking oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm to be installed
+Resolving Dependencies
+--> Running transaction check
+---> Package oracle-instantclient12.1-basic.x86_64 0:12.1.0.2.0-1 will be installed
+--> Finished Dependency Resolution
+ 
+Dependencies Resolved
+ 
+============================================================================================================================================================================================================
+ Package                                               Arch                          Version                               Repository                                                                  Size
+============================================================================================================================================================================================================
+Installing:
+ oracle-instantclient12.1-basic                        x86_64                        12.1.0.2.0-1                          /oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64                        185 M
+ 
+Transaction Summary
+============================================================================================================================================================================================================
+Install  1 Package
+ 
+Total size: 185 M
+Installed size: 185 M
+Is this ok [y/d/N]: y
+Downloading packages:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64                                                                                                                                       1/1 
+  Verifying  : oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64                                                                                                                                       1/1 
+ 
+Installed:
+  oracle-instantclient12.1-basic.x86_64 0:12.1.0.2.0-1                                                                                                                                                      
+ 
+Complete!
+
+Now that you have the Oracle instant client installed and the Oracle cx_Oracle module, it’s time to create the script to connect to the Oracle database.
+The script below is a totally educational example in a Productive environment you would never let the password of a user written in a script. As a matter of fact, the example here is performed in an Oracle Database 12cR1 that is a CDB database plus in a Oracle Linux 76.
+So here is the description of the script:
+
+	
+oraclelinux7]$ cat myconnectdb.py
+from __future__ import print_function
+ 
+ 
+import cx_Oracle
+ 
+# Connect as user "c##techdatabasket" with password "oraclexample123" to the "pythondb" service running on this computer.  (Here I am saying that the user c##techdatabasket will connect to the password "oraclexample123" on the server "oraclelinux7" connecting to the service name "pythondb.localdomain" which connects to a database named "pythondb".
+ 
+connection = cx_Oracle.connect("c##techdatabasket", "oraclexample123", "oraclelinux7/pythondb.localdomain")
+ 
+cursor = connection.cursor()
+##Here I want to know how many users exist in my Oracle Database
+cursor.execute(
+    'SELECT count(*) from all_users')
+for value in cursor:
+ 
+    print("Values:", value)
+
+After finished the script is executed as below:
+
+	
+oraclelinux7]$ python3 myconnectdb.py
+Values: (36,)
+
+So this is a simple explanation about how to connect to an Oracle Database using Python. If you want to check other scripts stay tuned at my GitHub channel: https://github.com/brunorsreis/oraclepython
