@@ -1,0 +1,78 @@
+##This post can also be found at: http://www.techdatabasket.com/2020/06/12/comparing-files-to-be-used-by-an-oracle-external-tables-using-python3/
+##Script and content created by Bruno Reis. It is not allowed to copy or share the content here without permission.
+
+Comparing files to be used by an Oracle External tables using Python3
+Since I started to work using Python to automate some tasks on my Since I started working with Python to automate some tasks in my environment. I also started to think about what I can get from it. Python is powerful and there are a lot to be explorered from it and I am a DBA person and I am slowly getting to know this programming language. I started to create some scripts for fun and that is the topic of this post . Remember that on this blog you will never find any information about that , I have only shared the script that I created and all the data that will be shown below are only examples. So my disclaimer is done, it’s time to show it!
+
+I had a situation when I had two *.txt files which after would be used by an Oracle external table. However, before I use those files I would like to make a comparison between them to know what exactly I would load in my database. The idea by itself does not seem so useful but can give you an idea about comparing files that can help you out while managing your database, on-premise as well still doesn’t cover how to load data or connect to any Cloud from an Oracle database on this blog. Before we get started, I will share some posts that may help you out if you don’t have Python or the necessary methods to use Python to connect to in your database:
+
+Connecting to Oracle Database using cx_Oracle module 7 for Python
+
+Installing Python 3 on Oracle Linux 7.6
+
+Ok, now that I have already showed the latest posts , we can proceed with the comparison between the two *.txt files. As a matter of fact, the operating system is an Oracle Linux 7.6. So follow below the two mentioned files:
+
+   ​
+ 
+File techtable1.ora: ​
+  
+oraclelinux7]$ cat techtable1.txt​
+BRZ,Brazil,Portuguese​
+NEZ,New Zealand,English​
+PRT,Portugal,Portuguese​
+SPN,Spain,Spanish​
+  
+​
+  
+File techtable2.ora: ​
+  
+oraclelinux7]$ cat techtable2.txt​
+ITL,Italy,Italian​
+ENG,England,English​
+SWE,Sweden,Swedish
+
+
+Then I created a Python script called comparetablefiles.py where I made a simple code to compare each line of these files with each other:
+    ​
+oraclelinux7]$ cat comparetablefiles.py​
+f1=open("techtable1.txt","r")​
+f2=open("techtable2.txt","r")​
+n = 0​
+for line1 in f1:​
+    for line2 in f2:​
+         if line1==line2:​
+            print("Same value in both lines.\n", line1[n])​
+            n += 1​
+         else:​
+            print("The line" ,n,  "at the file techtable1.txt is:")​
+            print(line1)​
+            print(" The line", n,  "at the file techtable2.txt is:")​
+            print(line2)​
+            n += 1​
+         break​
+f1.close()​
+f2.close()​
+
+After I executed the script using the python3 utility in the server:
+    ​
+oraclelinux7]$ python3 comparetablefiles.py​
+('The line', 0, 'at the file techtable1.txt is:')​
+BRZ,Brazil,Portuguese​
+(' The line', 0, 'at the file techtable2.txt is:')​
+ITL,Italy,Italian​
+('The line', 1, 'at the file techtable1.txt is:')​
+NEZ,New Zealand,English​
+(' The line', 1, 'at the file techtable2.txt is:')​
+ENG,England,English​
+('The line', 2, 'at the file techtable1.txt is:')​
+PRT,Portugal,Portuguese​
+(' The line', 2, 'at the file techtable2.txt is:')​
+SWE,Sweden,Swedish​
+('The line', 3, 'at the file techtable1.txt is:')​
+SPN,Spain,Spanish​
+(' The line', 3, 'at the file techtable2.txt is:')​
+HUN,Hungary,Hungarian
+
+Stay tuned! It’s just the beginning of this type of posts using Python to do daily DBA activities.
+
+
